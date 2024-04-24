@@ -1,23 +1,44 @@
-import { test, expect, chromium } from "@playwright/test";
+import { test, chromium, Cookie } from "@playwright/test";
 
-export const getCookies = async (url: string) => {
-  // Create a new incognito browser context
+export const getCookies = async (moxfieldURL: string) => {
   const browser = await chromium.launch();
   const context = await browser.newContext();
 
-  // Create a new page inside context.
+
   const page = await context.newPage();
-  await page.goto(url);
+  await page.goto(moxfieldURL);
 
-  // Get cookies from the page
-  const cookies = await (page as any).cookies(); // Casting 'page' to 'any' to bypass TypeScript error
-  console.log("Cookies:", cookies);
+  const cookies = await page.context().cookies();
+  console.log("Here are the cookies:", cookies);
 
-  // Dispose context once it's no longer needed.
   await context.close();
   await browser.close();
+
+  return cookies;
 };
 
-test("Get cookies from Moxfield URL", async () => {
-  await getCookies("https://www.moxfield.com/decks/5PzhWgSig0OtziBeSLIyJA");
-});
+export const getDecklistJSON = (sessionCookie: Cookie[], deckNumber: string) => {
+  console.log("Making GET request to Moxfield!")
+
+  return new Promise((resolve, reject) => {
+    
+    let request = require("request");
+    const options = {
+      method: "GET",
+      url: `https://api2.moxfield.com/v3/decks/all/${deckNumber}`,
+      headers: {
+        cookie: `${sessionCookie}`,
+      },
+    };
+    
+      request(options, function (error, response) {
+        if (error) {
+          console.log(error, " was thrown!");
+          reject(error);
+        }
+        console.log("Here is the JSON response: ", response.body);
+        resolve(response.body);
+      });
+    })
+};
+  
