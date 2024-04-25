@@ -1,6 +1,6 @@
 import { test, chromium, Cookie } from "@playwright/test";
 
-export const getCookies = async (moxfieldURL: string) => {
+const getCookies = async (moxfieldURL: string) => {
   const browser = await chromium.launch();
   const context = await browser.newContext();
 
@@ -17,8 +17,10 @@ export const getCookies = async (moxfieldURL: string) => {
   return cookies;
 };
 
-export const getDecklistJSON = (sessionCookie: Cookie[], deckNumber: string) => {
+export const getDecklistJSON = (deckNumber: string) => {
   console.log("Making GET request to Moxfield!")
+
+  const sessionCookie = getCookies(`https://www.moxfield.com/decks/${deckNumber}`)
 
   return new Promise((resolve, reject) => {
     
@@ -42,3 +44,5 @@ export const getDecklistJSON = (sessionCookie: Cookie[], deckNumber: string) => 
     })
 };
   
+
+module.exports = {getCookies, getDecklistJSON}
