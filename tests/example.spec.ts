@@ -12,6 +12,6 @@ test("Get JSON from Moxfield using cookie", async () => {
     "https://www.moxfield.com/decks/5PzhWgSig0OtziBeSLIyJA"
   );
 
-  const decklistJSON = await getDecklistJSON(cookie, "5PzhWgSig0OtziBeSLIyJA");
+  const decklistJSON = await getDecklistJSON("5PzhWgSig0OtziBeSLIyJA");
   console.log("HERE IS THE TEST DECKLIST: ", decklistJSON)
 });
